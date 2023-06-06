@@ -218,3 +218,15 @@ mod structs {
         assert_eq!(todo!("age") as u32, 42);
     }
 }
+
+/// ENUMS
+///
+/// An enum is another data type that you can define, which has a name and a set of variants. An
+/// enum corresponds to a "sum type" in functional programming, and can be thought of as a tagged
+/// union. An enum value is constructed using one of the variants, and can be destructed using
+/// pattern matching. Rust ensures that pattern matches against enums are exhaustive, meaning that
+/// you must handle every possible variant of the enum.
+///
+/// Enums are used in the Rust standard library for a variety of purposes, including (and notably)
+/// error handling.
+mod enums {}
