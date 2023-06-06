@@ -354,4 +354,102 @@ mod statements {
 /// Items are the major components of a Rust program, and include functions, structs, enums,
 /// traits, modules, type aliases, unions, and so on. Items are the declaration-level building
 /// blocks of a Rust program.
-mod items {}
+mod items {
+    #[test]
+    fn function_item() {
+        // Declare a function named `answer` that returns 42.
+
+        // Call the function:
+        let value: i32 = todo!("answer()");
+
+        assert_eq!(value, 42);
+    }
+
+    #[test]
+    fn struct_item() {
+        // Declare a struct item named `Person` that has name and age.
+        // The type of name is `&'static str` and the type of age is `i32`.
+        #[derive(PartialEq, PartialOrd, Eq, Ord, Debug)]
+        struct Person {}
+
+        let person: Person = todo!("Person with name of Alice and age of 42");
+
+        assert_eq!(todo!("person.name") as &str, "Alice");
+        assert_eq!(todo!("person.age") as i32, 42);
+    }
+
+    #[test]
+    fn enum_item() {
+        // Declare an enum item named `Direction` that has four variants:
+        // `North`, `South`, `East`, and `West`.
+        #[derive(PartialEq, PartialOrd, Eq, Ord, Debug)]
+        enum Direction {}
+
+        let direction: Direction = todo!("Direction::North");
+
+        assert_eq!(direction, todo!("Direction::North") as Direction);
+    }
+
+    #[test]
+    fn trait_item() {
+        // Declare a trait item named `Answer` that has a single function named `answer`
+        // that returns an `i32`.
+        trait Answer {}
+
+        struct Question {}
+
+        impl Question {
+            // impl Answer for Question
+            fn answer(&self) -> i32 {
+                42
+            }
+        }
+
+        let answer: i32 = Question {}.answer();
+
+        assert_eq!(answer, 42);
+    }
+
+    #[test]
+    fn module_item() {
+        // Declare a module item named `math` that has a function named `add` that adds
+        // two `i32` values together.
+        mod math {}
+
+        let answer: i32 = todo!("math::add(40, 2)");
+
+        assert_eq!(answer, 42);
+    }
+
+    #[test]
+    fn type_alias_item() {
+        // Declare a type alias named `Answer` that is an `i32`.
+        type Answer = ();
+
+        let answer: Answer = todo!("42");
+
+        assert_eq!(answer, todo!("42"));
+    }
+
+    #[test]
+    fn union_item() {
+        // Declare a union named `Number` that has two fields: `int: i32` and `float: f64`.
+        union Number {
+            float: f32,
+        }
+
+        let answer: Number = todo!("Number {{ int: 42 }}");
+
+        assert_eq!(unsafe { answer.float }, 5.9e-44);
+    }
+
+    #[test]
+    fn use_item() {
+        // Declare a use item that brings the `std::collections::HashMap` type into scope
+        // as `Map`.
+
+        // let mut map: Map<i32, &str> = Map::new();
+        // map.insert(42, "the answer");
+        // assert_eq!(map.get(&42), Some(&"the answer"));
+    }
+}

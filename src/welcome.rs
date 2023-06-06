@@ -9,6 +9,16 @@ mod welcome {
     //
     // REPOSITORY: https://github.com/jdegoes/intro-rust
     //
+    // You need to install:
+    //
+    // 1. Rust Compiler
+    // 2. Rustup toolchain manager
+    // 3. Cargo build tool
+    //
+    // Recommended:
+    //
+    // - VS Code + Rust Analyzer or Intellij IDEA Rust plugin
+    //
     // Daily Schedule:
     //
     //    START     :  9:00 London Time
