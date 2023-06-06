@@ -1,5 +1,7 @@
 #![allow(dead_code, unreachable_code, unused_variables)]
 
+/// 00 - FUNDAMENTALS
+///
 /// In this module, you will learn the fundamental syntax of Rust, without going into
 /// any real depth on the semantics of the language.
 ///
@@ -369,10 +371,9 @@ mod items {
     fn struct_item() {
         // Declare a struct item named `Person` that has name and age.
         // The type of name is `&'static str` and the type of age is `i32`.
-        #[derive(PartialEq, PartialOrd, Eq, Ord, Debug)]
         struct Person {}
 
-        let person: Person = todo!("Person with name of Alice and age of 42");
+        let person: Person = todo!("Person {{ name: \"Alice\", age: 42 }}");
 
         assert_eq!(todo!("person.name") as &str, "Alice");
         assert_eq!(todo!("person.age") as i32, 42);
@@ -382,7 +383,7 @@ mod items {
     fn enum_item() {
         // Declare an enum item named `Direction` that has four variants:
         // `North`, `South`, `East`, and `West`.
-        #[derive(PartialEq, PartialOrd, Eq, Ord, Debug)]
+        #[derive(PartialEq, Eq, Debug)]
         enum Direction {}
 
         let direction: Direction = todo!("Direction::North");
