@@ -39,7 +39,7 @@ mod structs {
     }
 
     #[test]
-    fn struct_debug_example() {
+    fn struct_debug() {
         // Derive the `Debug` trait for this struct, so that it can be printed.
         struct Person {
             name: &'static str,
@@ -58,7 +58,7 @@ mod structs {
     }
 
     #[test]
-    fn struct_eq_example() {
+    fn struct_eq() {
         // Derive the `PartialEq` and `Eq` traits for this struct, so that it can be compared for
         // equality.
         struct Person {
@@ -79,7 +79,7 @@ mod structs {
     }
 
     #[test]
-    fn struct_clone_example() {
+    fn struct_clone() {
         // Derive the `Clone` trait for this struct, so that it can be cloned.
         #[derive(Debug, PartialEq, Eq)]
         struct Person {
@@ -97,7 +97,7 @@ mod structs {
     }
 
     #[test]
-    fn struct_is_deep_clone() {
+    fn struct_clone_deep() {
         // Derive the `Clone` trait for this struct, so that it can be cloned.
         struct Person {
             address: Address,
@@ -176,7 +176,7 @@ mod structs {
     }
 
     #[test]
-    fn destructuring_struct() {
+    fn struct_destructuring() {
         #[derive(Debug, PartialEq, Eq)]
         struct Person {
             name: &'static str,
@@ -198,7 +198,7 @@ mod structs {
     }
 
     #[test]
-    fn pattern_matching_struct() {
+    fn struct_pattern_matching() {
         #[derive(Debug, PartialEq, Eq)]
         struct Person {
             name: &'static str,
@@ -229,4 +229,238 @@ mod structs {
 ///
 /// Enums are used in the Rust standard library for a variety of purposes, including (and notably)
 /// error handling.
-mod enums {}
+mod enums {
+    #[test]
+    fn basic_enum_example() {
+        // Define an enum called `Direction` with the variants `North`, `South`, `East`, and `West`.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {}
+
+        // Define a function that takes a `Direction` and returns a `bool` indicating whether the
+        // direction is `North`.
+        fn is_north(d: Direction) -> bool {
+            todo!("Use equality to compare `d` to `Direction::North`")
+        }
+
+        assert_eq!(todo!("is_north(Direction::North)") as bool, true);
+        assert_eq!(todo!("is_north(Direction::South)") as bool, false);
+        assert_eq!(todo!("is_north(Direction::East)") as bool, false);
+        assert_eq!(todo!("is_north(Direction::West)") as bool, false);
+    }
+
+    #[test]
+    fn enum_with_data_example() {
+        // Define an enum called `Movement` with the variants `North`, `South`, `East`, and `West`,
+        // each of which has an associated `u32` value, which indicates the number of spaces to move
+        // in that direction.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Movement {}
+
+        // Define a function that takes a `Movement` and returns a `u32` indicating how many spaces
+        // the movement should move.
+        fn spaces(m: Movement) -> u32 {
+            #[allow(unreachable_patterns)]
+            match m {
+                _ => todo!("Match on `m` and return the associated value for each variant"),
+            }
+        }
+
+        assert_eq!(todo!("spaces(Movement::North(42))") as u32, 42);
+        assert_eq!(todo!("spaces(Movement::South(42))") as u32, 42);
+        assert_eq!(todo!("spaces(Movement::East(42))") as u32, 42);
+        assert_eq!(todo!("spaces(Movement::West(42))") as u32, 42);
+    }
+
+    #[test]
+    fn enum_debug() {
+        // Derive the `Debug` trait for this enum, so that it can be printed.
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        assert_eq!(
+            todo!("format!(\"{{:?}}\", Direction::North)") as &str,
+            "North"
+        );
+        assert_eq!(
+            todo!("format!(\"{{:?}}\", Direction::South)") as &str,
+            "South"
+        );
+        assert_eq!(
+            todo!("format!(\"{{:?}}\", Direction::East)") as &str,
+            "East"
+        );
+        assert_eq!(
+            todo!("format!(\"{{:?}}\", Direction::West)") as &str,
+            "West"
+        );
+    }
+
+    #[test]
+    fn enum_eq() {
+        // Derive the `PartialEq` and `Eq` traits for this enum, so that it can be compared for
+        // equality.
+        #[derive(Debug)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        assert_eq!(todo!("Direction::North == Direction::North") as bool, true);
+        assert_eq!(todo!("Direction::North == Direction::South") as bool, false);
+        assert_eq!(todo!("Direction::North == Direction::East") as bool, false);
+        assert_eq!(todo!("Direction::North == Direction::West") as bool, false);
+    }
+
+    #[test]
+    fn enum_clone() {
+        // Derive the `Clone` trait for this enum, so that it can be cloned.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        let north = Direction::North;
+        let north2 = todo!("north.clone()");
+
+        assert_eq!(north, north2);
+    }
+
+    #[test]
+    fn enum_copy() {
+        // Derive the `Copy` trait for this enum, so that it can be copied.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Movement {
+            North(u32),
+            South(u32),
+            East(u32),
+            West(u32),
+        }
+
+        let north = Movement::North(42);
+
+        let north2 = todo!("north");
+
+        assert_eq!(north, north2);
+    }
+
+    #[test]
+    fn enum_hash() {
+        #![allow(unused_mut)]
+
+        // Derive the `Hash` trait for this enum, so that it can be used in a `HashMap`.
+        #[derive(Debug, PartialEq, Eq, Clone)]
+        enum Detective {
+            SherlockHolmes,
+            HerculePoirot,
+            PhilipMarlowe,
+            CAugusteDupin,
+        }
+
+        use std::collections::HashMap;
+
+        let mut detective_to_address: HashMap<Detective, &str> = HashMap::new();
+
+        let sherlock = Detective::SherlockHolmes;
+
+        // detective_to_address.insert(sherlock.clone(), "221B Baker Street");
+
+        let gotten: Option<&&str> = todo!("detective_to_address.get(&sherlock)");
+
+        assert_eq!(gotten, Some(&"221B Baker Street"));
+    }
+
+    #[test]
+    fn enum_default() {
+        // Derive the `Default` trait for this enum, so that it can be created with `Default::default()`.
+        // Note that you will have to choose which unit to make default with the `#[default]` attribute.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        let direction: Direction = todo!("Default::default()");
+
+        assert_eq!(direction, Direction::North);
+    }
+
+    #[test]
+    fn enum_destructuring() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        let direction = Direction::North;
+
+        // Unlike structs, you cannot always destructure an enum into one of its variants, because it
+        // may have been constructed with a different variant. However, for conditional destructuring,
+        // you can use the `if let` syntax.
+
+        // Use `if let` to destructure `direction` into `Direction::North`, and return true,
+        // otherwise return false.
+        let result: bool = todo!("if let ...");
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn enum_pattern_matching() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        let direction = Direction::North;
+
+        // Pattern match on the direction enum and return true if it is `Direction::North`, otherwise
+        // return false. Experiment with omitting variant cases, or using wildcards.
+        let result: bool = todo!("match direction ...");
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn enum_deep_pattern_matching() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum CharacterClass {
+            Fighter { power: Power },
+            Thief { power: Power },
+            Wizard { power: Power },
+        }
+
+        #[derive(Debug, PartialEq, Eq)]
+        enum Power {
+            Low,
+            Medium,
+            High,
+        }
+
+        // Pattern match on the character class and return true if it is a high-powered thief,
+        // otherwise return false.
+        fn is_high_powered_thief(c: CharacterClass) -> bool {
+            todo!("match c ...")
+        }
+
+        let thief = CharacterClass::Thief { power: Power::High };
+
+        assert_eq!(is_high_powered_thief(thief), true);
+    }
+}
