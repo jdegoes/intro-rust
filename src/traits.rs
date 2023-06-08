@@ -227,3 +227,109 @@ mod associated_types {
         assert_eq!(todo!("Add {{ amount: 1 }}.call(2)") as i32, 3);
     }
 }
+
+mod dynamic {
+    #[test]
+    fn dynamic_trait_object() {
+        // A dynamic trait object is a pointer to a type that implements a trait. It is called dynamic
+        // because the type of the object is not known at compile time, but rather at runtime. Dynamic
+        // trait objects are useful when we want to abstract over types that implement a trait, but we
+        // don’t know the exact type at compile time.
+        //
+        // The type of a dynamic trait object is `dyn Trait`, where `Trait` is the trait name. For
+        // example, `dyn Animal` is a dynamic trait object that points to a type that implements the
+        // `Animal` trait. However, `dyn Trait` cannot be returned from a function, or stored in a
+        // variable, because the size of the type is not known at compile time. In order to work around
+        // this limitation, we can use a trait object wrapped in a `Box<T>`, which is a pointer to a
+        // heap-allocated value of type `T`.
+        //
+        // For all these reasons, when you are using dynamic trait objects, you will typically use the
+        // `Box<dyn Trait>` type.
+        trait Animal {
+            fn name(&self) -> &'static str;
+            fn talk(&self) {
+                println!("{} cannot talk", self.name());
+            }
+        }
+
+        struct Human {
+            name: &'static str,
+        }
+
+        impl Animal for Human {
+            fn name(&self) -> &'static str {
+                self.name
+            }
+
+            fn talk(&self) {
+                println!("{} says hello", self.name());
+            }
+        }
+
+        let sherlock = Human { name: "Sherlock" };
+
+        // Create a dynamic trait object from the Human struct:
+        let sherlock_animal: Box<dyn Animal> = todo!("Use a box!");
+
+        assert_eq!(sherlock_animal.name(), "Sherlock");
+    }
+}
+
+mod existential {
+    #[test]
+    fn accept_impl() {
+        trait DuckLike {
+            fn quack(&self) -> String;
+        }
+
+        struct Duck {
+            name: &'static str,
+        }
+
+        impl DuckLike for Duck {
+            fn quack(&self) -> String {
+                format!("{} is quacking", self.name)
+            }
+        }
+
+        // Refactor this to use impl DuckLike instead of the trait bound:
+        fn make_duck_quack<T>(duck: T) -> String
+        where
+            T: DuckLike,
+        {
+            duck.quack()
+        }
+
+        assert_eq!(
+            make_duck_quack(Duck { name: "Donald" }),
+            "Donald is quacking"
+        );
+    }
+
+    #[test]
+    fn return_impl() {
+        trait DuckLike {
+            fn quack(&self) -> String;
+        }
+
+        struct Duck {
+            name: &'static str,
+        }
+
+        impl DuckLike for Duck {
+            fn quack(&self) -> String {
+                format!("{} is quacking", self.name)
+            }
+        }
+
+        // Refactor this to return an existential DuckLike using `impl`:
+        fn create_some_duck(name: &'static str) -> Duck {
+            Duck { name }
+        }
+
+        assert_eq!(
+            todo!("create_some_duck(\"Donald\").quack()") as String,
+            "Donald is quacking"
+        );
+    }
+}
