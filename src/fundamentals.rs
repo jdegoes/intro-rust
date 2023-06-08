@@ -1,13 +1,39 @@
 #![allow(dead_code, unreachable_code, unused_variables)]
 
-/// 00 - FUNDAMENTALS
+// 00 - FUNDAMENTALS
+//
+// In this module, you will learn the fundamental syntax of Rust, without going into
+// any real depth on the semantics of the language.
+//
+// After completing this module, you will be able to look at Rust code and mentally
+// decompose it into its constituent parts, identifying the major components, such
+// as literals, expressions, functions, traits, and so on.
+
+/// VARIABLES
 ///
-/// In this module, you will learn the fundamental syntax of Rust, without going into
-/// any real depth on the semantics of the language.
-///
-/// After completing this module, you will be able to look at Rust code and mentally
-/// decompose it into its constituent parts, identifying the major components, such
-/// as literals, expressions, functions, traits, and so on.
+/// A variable is a name that refers to a value. In Rust, variables are immutable by
+/// default, and must be explicitly marked as mutable. Variables can be declared with
+/// the `let` keyword, and can be annotated with a type, or have their type inferred
+/// by the compiler.
+mod variables {
+    #[test]
+    fn immutable_variable() {
+        todo!("Create a variable called `answer` that is immutable and set it equal to 42 with type i32");
+
+        assert_eq!(todo!("answer") as u32, 42);
+    }
+
+    #[test]
+    fn mutable_variable() {
+        todo!(
+            "Create a variable called `answer` that is mutable and set it equal to 0 with type i32"
+        );
+
+        todo!("Assign 42 to `answer`");
+
+        assert_eq!(todo!("answer") as u32, 42);
+    }
+}
 
 /// LITERALS
 ///

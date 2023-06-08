@@ -1,16 +1,16 @@
 #![allow(dead_code, unreachable_code, unused_variables)]
 
-/// 01 - TYPES
-///
-/// Rust is a statically typed programming language, which means that every expression, function
-/// input, and function output has a "type" that is known statically at compile-time. The type
-/// determines a set of values which are permissible at this point in the program, and can be
-/// thought of as a compile-time description of how the memory that holds a value is to be
-/// interpreted. Static types allow you to prevent invalid use of memory, preventing a large
-/// class of runtime errors from ever occurring.
-///
-/// In this section, you will learn about how to declare your own types and how to use those
-/// types in very simple ways.
+// 01 - TYPES
+//
+// Rust is a statically typed programming language, which means that every expression, function
+// input, and function output has a "type" that is known statically at compile-time. The type
+// determines a set of values which are permissible at this point in the program, and can be
+// thought of as a compile-time description of how the memory that holds a value is to be
+// interpreted. Static types allow you to prevent invalid use of memory, preventing a large
+// class of runtime errors from ever occurring.
+//
+// In this section, you will learn about how to declare your own types and how to use those
+// types in very simple ways. You will also learn about common types in the Rust standard library.
 
 /// STRUCTS
 ///
@@ -396,7 +396,7 @@ mod enums {
     }
 
     #[test]
-    fn enum_destructuring() {
+    fn enum_destructuring_if_let() {
         #[derive(Debug, PartialEq, Eq)]
         enum Direction {
             North,
@@ -416,6 +416,27 @@ mod enums {
         let result: bool = todo!("if let ...");
 
         assert_eq!(result, true);
+    }
+
+    #[test]
+    fn enum_destructuring_let_else() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum JobTitle {
+            Engineer { level: u32 },
+            Manager,
+        }
+
+        let title = JobTitle::Engineer { level: 3 };
+
+        // Use let-else to destructure `title` into `Engineer`, extracting out the level or instead
+        // calling `panic!` with an error message.
+        let level = if let JobTitle::Engineer { level } = title {
+            level
+        } else {
+            0
+        };
+
+        assert_eq!(level, 3);
     }
 
     #[test]
@@ -462,5 +483,69 @@ mod enums {
         let thief = CharacterClass::Thief { power: Power::High };
 
         assert_eq!(is_high_powered_thief(thief), true);
+    }
+}
+
+mod generics {
+    #[test]
+    fn struct_generic() {
+        // Define a struct called `Pair` that has two type parameters, `A` and `B`,
+        // and two fields, `a` and `b`, of type `A` and `B` respectively.
+        #[derive(Debug, PartialEq, Eq)]
+        struct Pair {}
+
+        // let pair = Pair { a: 42, b: "foo" };
+
+        assert_eq!(todo!("pair.a") as i32, 42);
+        assert_eq!(todo!("pair.a") as &str, "foo");
+    }
+
+    #[test]
+    fn enum_generic() {
+        // Define an enum called `Either` that has two type parameters, `A` and `B`,
+        // and two variants, `Left` and `Right`, each of which holds a value of type
+        // `A` or `B` respectively.
+        #[derive(Debug, PartialEq, Eq)]
+        enum Either {}
+
+        // let left = Either::Left(42);
+        // let right = Either::Right("foo");
+
+        assert_eq!(todo!("left") as Either, todo!("Either::Left(42)"));
+        assert_eq!(todo!("right") as Either, todo!("Either::Right(\"foo\")"));
+    }
+}
+
+mod standard {
+    #[test]
+    fn string_type() {
+        // Create a `String` from a string literal.
+        let s: String = todo!("\"Hello, world!\"");
+
+        assert_eq!(s, "Hello, world!".to_owned());
+    }
+
+    #[test]
+    fn string_slice() {
+        // Create a read-only substring from the following string slice.
+        let s: &str = "Hello, world!";
+
+        assert_eq!(todo!("&s[0..5]") as &str, "Hello");
+    }
+
+    #[test]
+    fn vector_type() {
+        // Create a `Vec<i32>` from a list of numbers.
+        let v: Vec<i32> = todo!("vec![1, 2, 3]");
+
+        assert_eq!(v, vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn vector_slice() {
+        // Create a read-only slice from the following vector.
+        let v: Vec<i32> = vec![1, 2, 3];
+
+        assert_eq!(todo!("&v[0..2]") as &[i32], &[1, 2]);
     }
 }
