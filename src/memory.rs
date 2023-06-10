@@ -18,6 +18,13 @@ use std::{mem::swap, pin::Pin};
 // enough to be able to write safe Rust code, and to understand the error messages that the
 // compiler gives you when you don't.
 
+/// STACK
+///
+/// The stack is a region of memory allocated to each thread. It is used to store local variables,
+/// function arguments, and return values. The stack is a LIFO (last in, first out) data structure.
+/// Storing values on the stack is very fast, because it only requires incrementing a pointer as
+/// the stack grows, and then decrementing the pointer to free the memory as the stack shrinks.
+/// The stack grows with each function call, and shrinks with each function return.
 mod stack {
 
     #[test]
@@ -62,6 +69,12 @@ mod stack {
     }
 }
 
+/// HEAP
+///
+/// The heap is a region of memory that is managed by the operating system. It is used to allocate
+/// memory for objects whose size is not known at compile time, or whose lifetime is not known at
+/// compile time. The heap is also used to allocate memory for objects that are very large, or
+/// that must live for a long time.
 mod heap {
     #[test]
     fn heap_size() {
@@ -146,7 +159,7 @@ mod raii {
     /// In Rust, variables own resources. When objects go out of scope, their destructor is called,
     /// and the resources they own are released. This is the basis of Rust's memory safety.
     ///
-    /// Rust provides a middleground between manual memory management and garbage collection.
+    /// Rust provides a middle-ground between manual memory management and garbage collection.
     #[test]
     fn automatic_freeing_of_memory() {
         #[derive(Debug, PartialEq, Eq)]
@@ -221,6 +234,14 @@ mod mutable_variables {
     }
 }
 
+/// POINTERS (REFERENCES)
+///
+/// Rust provides two kinds of pointers: shared pointers and unique pointers. Shared pointers
+/// allow multiple, read-only references to the same value. Unique pointers allow only a single,
+/// mutable reference to a value. Also called references, pointers are a basic building block in
+/// all programming languages.
+///
+/// In this section, you will learn about Rust's pointer types.
 mod safe_pointers {
 
     #[test]
@@ -364,6 +385,13 @@ mod safe_pointers {
     }
 }
 
+/// OWNERSHIP
+///
+/// In Rust, every value has a single owner. When the owner goes out of scope, the value is dropped.
+/// This is the basis of Rust's memory safety, and the feature that makes it possible to use Rust
+/// without having to manually allocate and free memory.
+///
+/// In this section, you will learn about Rust's ownership model, including borrowing via pointers.
 mod ownership {
     #[test]
     fn move_semantics() {
@@ -470,6 +498,10 @@ mod ownership {
     }
 }
 
+/// CLOSURES
+///
+/// Closures may capture over variables from their environment. This is a powerful feature, but
+/// requires that you be aware of capture semantics on ownership and borrowing.
 mod closures {
     #[test]
     fn closure_move() {
@@ -549,10 +581,19 @@ mod closures {
     }
 }
 
+/// WRAPPER TYPES
+///
+/// Rust provides a number of wrapper types that are used to provide additional memory-related
+/// functionality beyond what Rust's built-in pointer types provide. These types are used to
+/// provide interior mutability, reference counting, and other features.
+///
+/// In this section, we will look at wrapper types that are useful in the context of a single
+/// thread. In a later section, we will look at wrapper types that are useful in the context of
+/// multiple threads.
 mod wrapper_types {
     use std::mem::size_of;
 
-    /// Box<A> is essentially a pointer to memory stored on heap.
+    /// Box<A> is a smart pointer that allocates its contents on the heap.
     #[test]
     fn box_wrapper() {
         #[derive(Debug, PartialEq)]
@@ -748,9 +789,11 @@ mod lifetimes {
 
     #[test]
     fn struct_lifetime_simple() {
+        /// Refactor this from using 'static lifetime for the name to using a lifetime parameter,
+        /// called `'a`, and ensure the code still compiles and passes.
         #[derive(Debug, PartialEq)]
-        struct Person<'a> {
-            name: &'a str,
+        struct Person {
+            name: &'static str,
             age: i32,
         }
 

@@ -217,6 +217,31 @@ mod structs {
         assert_eq!(todo!("name") as &'static str, "John Doe");
         assert_eq!(todo!("age") as u32, 42);
     }
+
+    #[test]
+    fn struct_pattern_matching_by_ref() {
+        #[derive(Debug, PartialEq, Eq)]
+        struct Person {
+            name: String,
+            age: u32,
+        }
+
+        let person = Person {
+            name: "John Doe".to_owned(),
+            age: 42,
+        };
+
+        match person {
+            Person { name: n, age: a } => {
+                println!("Name: {}", n);
+                println!("Age: {}", a);
+            }
+        }
+
+        // Try the following code, note the problem, and fix it using the `ref` keyword in the pattern
+        // match (right before `n`), or by using `match &person` instead of `match person`.
+        assert_eq!(todo!("person.name") as String, "John Doe");
+    }
 }
 
 /// ENUMS

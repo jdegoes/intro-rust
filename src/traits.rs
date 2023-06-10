@@ -19,7 +19,6 @@ mod basics {
         // containing the function signatures that describe the behavior of the types that implement
         // the trait.
         trait Animal {
-            // fn create(name: &'static str) -> Self;
             fn name(&self) -> &'static str;
             fn talk(&self) {
                 println!("{} cannot talk", self.name());

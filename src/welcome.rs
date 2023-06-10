@@ -9,17 +9,26 @@ mod welcome {
     //
     // REPOSITORY: https://github.com/jdegoes/intro-rust
     //
-    // You need to install:
+    // RUST:
     //
-    // 1. Rust Compiler
-    // 2. Rustup toolchain manager
-    // 3. Cargo build tool
+    // To install Rust, you'll need to install rustup, the Rust toolchain installer.
+    // Rustup will also install the Rust compiler (rustc) and the Cargo build tool by default.
     //
-    // Recommended:
+    // On Unix-based systems such as Linux and macOS, run:
+    // $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    //
+    // On Windows, download and run the rustup-init.exe from:
+    // https://rustup.rs/
+    //
+    // After running the above commands, rustup, rustc, and Cargo will be installed.
+    // You may need to restart your terminal or run the following to update your current shell environment:
+    // $ source $HOME/.cargo/env
+    //
+    // IDE:
     //
     // - VS Code + Rust Analyzer or Intellij IDEA Rust plugin
     //
-    // Daily Schedule:
+    // DAILY SCHEDULE:
     //
     //    START     :  9:00 London Time
     //    BIG BREAK : 12:00 London Time
