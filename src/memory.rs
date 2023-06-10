@@ -1,4 +1,4 @@
-#![allow(dead_code, unreachable_code, unused_variables)]
+#![allow(dead_code, unreachable_code, unused_variables, unused_imports)]
 
 #[allow(unused_imports)]
 use std::{mem::swap, pin::Pin};
@@ -136,6 +136,54 @@ mod heap {
         // let sherlock = create_person("Sherlock Holmes".to_owned(), 64);
 
         assert_eq!(todo!("sherlock.name()") as String, "Sherlock Holmes");
+    }
+}
+
+mod raii {
+    /// RAII stands for "Resource Acquisition Is Initialization". It is a pattern that is used to
+    /// ensure that resources are released when they go out of scope.
+    ///
+    /// In Rust, variables own resources. When objects go out of scope, their destructor is called,
+    /// and the resources they own are released. This is the basis of Rust's memory safety.
+    ///
+    /// Rust provides a middleground between manual memory management and garbage collection.
+    #[test]
+    fn automatic_freeing_of_memory() {
+        #[derive(Debug, PartialEq, Eq)]
+        struct Person<'a> {
+            name: &'static str,
+            age: i32,
+            dropped: &'a mut bool,
+        }
+
+        let dropped = false;
+
+        impl Drop for Person<'_> {
+            fn drop(&mut self) {
+                (*self.dropped) = true;
+
+                println!("Dropping {:?}", self);
+            }
+        }
+
+        let mut dropped = false;
+
+        let detective = Person {
+            name: "Sherlock Holmes",
+            age: 64,
+            dropped: &mut dropped,
+        };
+
+        fn relocate(p: Person) -> () {
+            println!("Relocating {:?} to another country", p);
+        }
+
+        relocate(detective);
+
+        println!("Is detective still alive?");
+
+        // Fix the test and try to understand why your change makes it pass.
+        assert_eq!(dropped, false);
     }
 }
 
@@ -341,39 +389,6 @@ mod ownership {
     }
 
     #[test]
-    fn drop_semantics() {
-        #[derive(Debug, PartialEq, Eq, Clone)]
-        struct Person {
-            name: &'static str,
-            age: i32,
-        }
-
-        impl Drop for Person {
-            fn drop(&mut self) {
-                println!("Dropping {:?}", self);
-            }
-        }
-
-        fn consume(p: Person) -> () {
-            println!("Consuming {:?}", p);
-        }
-
-        let p1 = Person {
-            name: "Sherlock Holmes",
-            age: 64,
-        };
-
-        let p2 = p1.clone();
-
-        consume(p1);
-
-        println!("Is p1 still alive?");
-
-        // Try comparing `p1` to `p2`, note what happens, and fix the problem.
-        assert_eq!(todo!("p1") as Person, p2);
-    }
-
-    #[test]
     fn copied_shared_pointer_semantics() {
         #[derive(Debug, PartialEq, Clone)]
         struct Point {
@@ -534,114 +549,251 @@ mod closures {
     }
 }
 
-mod threads {
-    #[allow(unused_imports)]
-    use std::sync::{Arc, Mutex};
+mod wrapper_types {
+    use std::mem::size_of;
 
+    /// Box<A> is essentially a pointer to memory stored on heap.
     #[test]
-    fn transferring_ownership() {
+    fn box_wrapper() {
+        #[derive(Debug, PartialEq)]
         struct Person {
             name: String,
             age: i32,
-            address: Address,
-        }
-
-        struct Address {
-            street: String,
-            city: String,
         }
 
         let sherlock = Person {
             name: "Sherlock Holmes".to_string(),
             age: 64,
-            address: Address {
-                street: "221B Baker Street".to_string(),
-                city: "London".to_string(),
-            },
         };
 
-        let _ = std::thread::spawn(|| {
-            let mut sherlock2 = sherlock;
+        let sherlock_box = Box::new(sherlock);
 
-            sherlock2.address.city = "New York".to_string();
-
-            println!("Sherlock moved to New York!");
-        });
-
-        // Explain why the following code does not and cannot compile. Then, fix the problem.
-        assert_eq!(todo!("sherlock.age") as i32, 64);
+        assert_eq!(
+            size_of::<Box<Person>>(),
+            todo!("What is the size of a Box?")
+        );
     }
 
+    /// Rc<A> is a reference-counted type that allows sharing of immutable values.
     #[test]
-    fn move_closure() {
+    fn rc_wrapper() {
+        use std::rc::Rc;
+
+        #[derive(Debug, PartialEq)]
         struct Person {
             name: String,
             age: i32,
-            address: Address,
         }
 
-        struct Address {
-            street: String,
-            city: String,
-        }
-
-        let mut sherlock = Person {
+        let sherlock = Person {
             name: "Sherlock Holmes".to_string(),
             age: 64,
-            address: Address {
-                street: "221B Baker Street".to_string(),
-                city: "London".to_string(),
-            },
         };
 
-        let _ = std::thread::spawn(move || {
-            sherlock.address.city = "New York".to_string();
+        let sherlock_rc = todo!("Create a Rc to Sherlock");
 
-            println!("Sherlock moved to New York!");
-        });
+        let pointer1 = todo!("Clone a Rc to Sherlock");
+        let pointer2 = todo!("Clone a Rc to Sherlock");
 
-        // A value that is moved to a closure cannot be used after the move.
-        // Uncomment the following line to see what happens, and then fix the problem.
-        assert_eq!(todo!("sherlock.address.city") as String, "London");
+        assert_eq!(todo!("pointer1.age") as i32, todo!("pointer2.age") as i32);
     }
 
+    /// Cell<A> is a type that allows zero-cost interior mutability for Copy types.
     #[test]
-    fn closure_share() {
+    fn cell_wrapper() {
+        use std::cell::Cell;
+
+        #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+        struct Person {
+            name: &'static str,
+            age: i32,
+        }
+
+        let sherlock = Person {
+            name: "Sherlock Holmes",
+            age: 64,
+        };
+
+        let sherlock_cell = Cell::new(sherlock);
+
+        let pointer1 = &sherlock_cell;
+        let pointer2 = &sherlock_cell;
+
+        // Use the `replace` method to change the age of Sherlock to 65, through `pointer1`:
+        let original_sherlock: Person = todo!("Create a new version of Sherlock whose page is 65");
+
+        // Use the `replace` method to change the age of Sherlock to 66, through `pointer1`:
+        let older_sherlock: Person = todo!("Create a new version of Sherlock whose page is 66");
+
+        assert_eq!(
+            original_sherlock,
+            Person {
+                name: "Sherlock Holmes",
+                age: 64
+            }
+        );
+        assert_eq!(
+            older_sherlock,
+            Person {
+                name: "Sherlock Holmes",
+                age: 65
+            }
+        );
+        assert_eq!(
+            sherlock_cell.get(),
+            Person {
+                name: "Sherlock Holmes",
+                age: 66
+            }
+        );
+    }
+
+    // RefCell<A> is a type that allows interior mutability for non-Copy types, at higher cost.
+    #[test]
+    fn ref_cell_wrapper() {
+        use std::cell::RefCell;
+
+        #[derive(Clone, Eq, PartialEq, Debug)]
         struct Person {
             name: String,
             age: i32,
-            address: Address,
         }
 
-        struct Address {
-            street: String,
-            city: String,
-        }
-
-        let sherlock = Arc::new(Mutex::new(Person {
+        let sherlock = Person {
             name: "Sherlock Holmes".to_string(),
             age: 64,
-            address: Address {
-                street: "221B Baker Street".to_string(),
-                city: "London".to_string(),
-            },
-        }));
+        };
 
-        let thread_sherlock = sherlock.clone();
+        let sherlock_ref_cell = RefCell::new(sherlock);
 
-        let thread = std::thread::spawn(move || {
-            let mut locked = thread_sherlock.lock().unwrap();
+        let pointer1 = &sherlock_ref_cell;
+        let pointer2 = &sherlock_ref_cell;
 
-            locked.address.city = "New York".to_string();
+        // Use the `borrow_mut` method to change the age of Sherlock to 65, through `pointer1`:
+        todo!("Change Sherlock's age to 65");
 
-            println!("Sherlock moved to New York!");
-        });
+        // Use the `borrow_mut` method to change the age of Sherlock to 66, through `pointer2`:
+        todo!("Change Sherlock's age to 66");
 
-        thread.join().unwrap();
+        assert_eq!(sherlock_ref_cell.borrow().age, 66);
+    }
 
-        let locked = sherlock.lock().unwrap();
+    // OnceCell<A> is a type that allows single assignment of non-Copy types, at zero cost.
+    #[test]
+    fn once_cell_wrapper() {
+        use std::cell::RefCell;
+        use std::collections::HashMap;
 
-        // Try deleting Arc and Mutex and exploring the effect on compilation.
-        assert_eq!(todo!("locked.address.city") as String, "New York");
+        use once_cell::unsync::OnceCell;
+
+        #[derive(Clone, Eq, PartialEq, Debug)]
+        struct Person {
+            name: String,
+            age: i32,
+        }
+
+        let sherlock_once_cell: OnceCell<Person> = OnceCell::new();
+
+        let pointer1: &OnceCell<Person> = &sherlock_once_cell;
+        let pointer2: &OnceCell<Person> = &sherlock_once_cell;
+
+        // Use the `get_or_init` method to set the value of Sherlock to 64, through `pointer1`:
+        todo!("Create a Sherlock whose age is 64");
+
+        // Use the `get_or_init` method to set the value of Sherlock to 65, through `pointer2`:
+        todo!("Create a Sherlock whose age is 65");
+
+        assert_eq!(sherlock_once_cell.get().unwrap().age, 64);
+    }
+}
+
+/// LIFETIMES
+///
+/// Lifetimes are a way to ensure that pointers (references) are valid for as long as they are
+/// used. Rust uses the concept of lifetimes even when you don't explicitly see them. However,
+/// there are many occassions when you need to explicitly specify lifetimes, and this section
+/// will teach you how to do that.
+mod lifetimes {
+    #[test]
+    fn lifetime_elision() {
+        fn identity_explicit<'a>(x: &'a i32) -> &'a i32 {
+            x
+        }
+
+        fn identity_implicit(x: &i32) -> &i32 {
+            todo!("Write the same function as identity_explicit, but without explicit lifetimes")
+        }
+
+        let x = 1;
+
+        assert_eq!(identity_explicit(&x), identity_implicit(&x));
+    }
+
+    #[test]
+    fn lifetime_max() {
+        todo!("Try to rewrite this function to not use explicit lifetimes");
+        fn max_explicit<'a>(x: &'a i32, y: &'a i32) -> &'a i32 {
+            if x > y {
+                x
+            } else {
+                y
+            }
+        }
+
+        let x = 1;
+        let y = 2;
+
+        assert_eq!(max_explicit(&x, &y), &y);
+    }
+
+    #[test]
+    fn struct_lifetime_simple() {
+        #[derive(Debug, PartialEq)]
+        struct Person<'a> {
+            name: &'a str,
+            age: i32,
+        }
+
+        let sherlock = Person {
+            name: "Sherlock Holmes",
+            age: 64,
+        };
+
+        assert_eq!(sherlock.name, "Sherlock Holmes");
+    }
+
+    #[test]
+    fn struct_lifetime_complex() {
+        enum Tree<A> {
+            Leaf(A),
+            Branch(Box<Tree<A>>, Box<Tree<A>>),
+        }
+
+        struct TreeIterator<'a, A> {
+            current: Option<&'a Tree<A>>,
+            todo: Vec<&'a Tree<A>>,
+        }
+
+        fn advance<'a>(iterator: &mut TreeIterator<'a, i32>) -> Option<&'a i32> {
+            todo!("Implement advance for TreeIterator")
+        }
+
+        let tree = Tree::Branch(
+            Box::new(Tree::Leaf(1)),
+            Box::new(Tree::Branch(
+                Box::new(Tree::Leaf(2)),
+                Box::new(Tree::Leaf(3)),
+            )),
+        );
+
+        let mut iterator = TreeIterator {
+            current: Some(&tree),
+            todo: Vec::new(),
+        };
+
+        assert_eq!(advance(&mut iterator), Some(&1));
+        assert_eq!(advance(&mut iterator), Some(&2));
+        assert_eq!(advance(&mut iterator), Some(&3));
+        assert_eq!(advance(&mut iterator), None);
     }
 }

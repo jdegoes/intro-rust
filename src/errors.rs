@@ -1,6 +1,6 @@
 #![allow(dead_code, unreachable_code, unused_variables)]
 
-// 05 -- ERRORS
+// 04 -- ERRORS
 //
 // Rust does not have exceptions. Instead, it has built-in data types that you can use for error
 // handling, and you can always create your own data types. In addition, to ease the process of
