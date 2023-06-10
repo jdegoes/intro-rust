@@ -13,6 +13,14 @@
 // for error propagation ensures that boilerplate error handling code is minimized. This achieves
 // the best of both worlds: Rust programs are robust and easy to write.
 
+/// OPTION
+///
+/// Rust does not support "nulls". Instead, Rust has an enum named Option<T> that is used to
+/// represent the presence or absence of a value. The Option<T> enum has two constructors:
+/// Some and None. The Some constructor is used to represent the presence of a value, and
+/// the None constructor is used to represent the absence of a value.
+///
+/// In this section, you will become more familiar with the Option data type.
 mod option {
     #[test]
     fn basic_option() {
@@ -139,6 +147,17 @@ mod option {
     }
 }
 
+/// RESULT
+///
+/// The Result<Ok, Err> type is used to represent the result of an operation that may fail. The
+/// Ok value represents the successful result, and the Err value represents the error result.
+/// This is the idiomatic way to describe and handle recoverable (non-fatal) errors in Rust.
+///
+/// The Result type is an enum with two constructors: Ok and Err. The Ok constructor is used to
+/// represent the successful result, and the Err constructor is used to represent the error result.
+///
+/// Although you can use any type you want for Err, the standard library defines a trait named
+/// std::error::Error, which your errors should generally implement.
 mod result {
     #[test]
     fn basic_result() {
@@ -291,4 +310,28 @@ mod result {
     }
 }
 
-mod anyhow_error {}
+/// PANICS
+///
+/// Sometimes, your program will encounter an error that it cannot recover from, such as a fatal or
+/// catastrophic error, or perhaps a bug in your program. In these cases, it is appropriate to
+/// panic, which causes your program to abort. Panics should not be used for recoverable errors.
+/// When in doubt, do not panic!
+///
+/// In this section, you will learn how to panic.
+mod panics {
+    #[test]
+    fn basic_panic() {
+        // Use the panic! macro to panic with a message:
+        todo!("panic with a message");
+    }
+
+    #[test]
+    fn catch_unwind_panic() {
+        let result = std::panic::catch_unwind(|| {
+            // Use the panic! macro to panic with a message:
+            todo!("panic with a message");
+        });
+
+        assert!(result.is_err());
+    }
+}
