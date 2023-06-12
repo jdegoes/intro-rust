@@ -1,4 +1,4 @@
-## Overview
+## Learn the Rust Programming Language
 
 Rust is a systems programming language designed for safety, concurrency, and performance. It has gained popularity for its innovative features that prevent memory-related bugs and allow for low-latency, performant, and efficient computation. Understanding Rust can provide new perspectives and approaches to building robust, concurrent, and high-performance applications.
 
