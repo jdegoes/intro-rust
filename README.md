@@ -4,15 +4,17 @@ Rust is a systems programming language designed for safety, concurrency, and per
 
 In this 3-day workshop, attendees will receive a beginner-level introduction to Rust. By the end of the course, all participants, regardless of background, will have a solid entry-level foundation in Rust and be able to confidently use it for various real-world programming tasks.
 
-NOTE: Although no familiarity with Scala is required, special attention will be given to the similarities and differences between Scala and Rust.
-Who Should Attend
+**NOTE**: _Although no familiarity with Scala is required, special attention will be given to the similarities and differences between Scala and Rust._
+
+### Who Should Attend
 
 Any developers who are looking to move into Rust, explore systems level programming, or build efficient cloud-native applications. Scala developers who want to explore Rust as an alternative or complementary language, particularly for building safe, concurrent, and high-performance systems.
-Prerequisites
+
+### Prerequisites
 
 No prior knowledge of Rust is required. Familiarity with procedural programming in some programming languages is required.
 
-## Topics
+### Topics
 
  - Introduction to Rust
     - Overview and goals of Rust
@@ -43,15 +45,15 @@ No prior knowledge of Rust is required. Familiarity with procedural programming 
     - Rust's built-in test framework
     - Debugging techniques and tools
 
-## Daily Structure
+### Daily Structure
 
 Three days, 7 hours a day starting at 09:00 London Time, until 16:00 London Time.
 
-## Attendance
+### Attendance
 
 Attendance at this workshop is fully remote. Attendees will be provided with a link to a remote meeting session the day before the event, in which they can see and hear the workshop, ask the instructor questions, and chat with other attendees.
 
-## Setup Instructions
+### Setup Instructions
 
 To install Rust, you'll need to install `rustup`, the Rust toolchain installer.
 
