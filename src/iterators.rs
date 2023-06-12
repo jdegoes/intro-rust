@@ -11,6 +11,11 @@
 //
 // In this section, you will learn how to use and create iterators.
 
+/// BASICS
+///
+/// Many Rust data structures can be converted into iterators, which can be used in for loops.
+/// In this section, you will learn how to use iterators in for loops, and how to create your own
+/// iterators for custom data types.
 mod basics {
     #[test]
     fn basic_for_over_vec() {
@@ -97,6 +102,10 @@ mod basics {
     }
 }
 
+/// OPERATORS
+///
+/// In this section, you will learn about some of the handy operators that are built into
+/// iterators, which let you solve more complex problems simply and efficiently.
 mod operators {
     #[test]
     fn map() {

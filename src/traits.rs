@@ -120,6 +120,12 @@ mod basics {
     }
 }
 
+/// STANDARD TRAITS
+///
+/// The Rust standard library provides a number of traits that are commonly used in Rust programs.
+/// These traits are implemented for many of the primitive types, and also for some standard library
+/// types such as `String` and `Vec<T>`. In this section, you will explore these standard traits
+/// and what capabilities they provide.
 mod standard_traits {
     #[test]
     fn to_string() {
@@ -204,13 +210,15 @@ mod standard_traits {
     }
 }
 
+/// ASSOCIATED TYPES
+///
+/// Traits may have associated types, which are types that are defined as part of the trait
+/// definition. Associated types are similar to generic type parameters, except that they are
+/// specified as part of the trait definition, which makes them deterministic functions of the
+/// trait parameters.
 mod associated_types {
     #[test]
     fn pseudo_function() {
-        // Traits may have associated types, which are types that are defined as part of the trait
-        // definition. Associated types are similar to generic type parameters, except that they are
-        // specified as part of the trait definition, which makes them deterministic functions of the
-        // trait parameters. In this example, `Out` is a function of `In` for some type `Self`.
         trait Function<In> {
             type Out;
 
@@ -227,23 +235,37 @@ mod associated_types {
     }
 }
 
+/// DYNAMIC TRAIT OBJECTS
+///
+/// A dynamic trait object is a pointer to a type that implements a trait. It is called dynamic
+/// because the type of the object is not known at compile time, but rather at runtime. Dynamic
+/// trait objects are useful when we want to abstract over types that implement a trait, but we
+/// don’t know the exact type at compile time.
+///
+/// Programmers from other backgrounds can most easily understand a dynamic trait as an
+/// "interface" (Java, C#), "abstract class" (C++), or "trait" (Scala, Kotlin). The defining
+/// feature of a dynamic trait is dynamic dispatch, which means that the method that is called is
+/// determined at runtime, rather than at compile time. This happens through a "virtual function
+/// table", otherwise known as a "vtable", which is a table of function pointers that is stored
+/// alongside the trait object.
+///
+/// In Rust, dynamic traits occupy the space of two pointers: one for the vtable, and one for the
+/// data associated with the object. This additional level of indirection means that dynamic traits
+/// are notably slower than static traits. However, in some cases the runtime cost of dynamic
+/// dispatch is more than paid for by the benefits of abstraction.
+///
+/// The type of a dynamic trait object is `dyn Trait`, where `Trait` is the trait name. For
+/// example, `dyn Animal` is a dynamic trait object that points to a type that implements the
+/// `Animal` trait. However, `dyn Trait` cannot be returned from a function, or stored in a
+/// variable, because the size of the data of the type is not known at compile time. In order to
+/// work around this limitation, we can use a trait object wrapped in a `Box<T>`, which is a
+/// pointer to a heap-allocated value of type `T` that we will learn more about later.
+///
+/// For all these reasons, when you are using dynamic trait objects, you will typically use the
+/// `Box<dyn Trait>` type.
 mod dynamic {
     #[test]
     fn dynamic_trait_object() {
-        // A dynamic trait object is a pointer to a type that implements a trait. It is called dynamic
-        // because the type of the object is not known at compile time, but rather at runtime. Dynamic
-        // trait objects are useful when we want to abstract over types that implement a trait, but we
-        // don’t know the exact type at compile time.
-        //
-        // The type of a dynamic trait object is `dyn Trait`, where `Trait` is the trait name. For
-        // example, `dyn Animal` is a dynamic trait object that points to a type that implements the
-        // `Animal` trait. However, `dyn Trait` cannot be returned from a function, or stored in a
-        // variable, because the size of the type is not known at compile time. In order to work around
-        // this limitation, we can use a trait object wrapped in a `Box<T>`, which is a pointer to a
-        // heap-allocated value of type `T`.
-        //
-        // For all these reasons, when you are using dynamic trait objects, you will typically use the
-        // `Box<dyn Trait>` type.
         trait Animal {
             fn name(&self) -> &'static str;
             fn talk(&self) {

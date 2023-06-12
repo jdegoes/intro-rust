@@ -10,6 +10,13 @@
 // provides a number of tools to help you write concurrent programs without
 // suffering from many of the common pitfalls, such as races.
 
+/// THREADS
+///
+/// As a multi-threaded programming language, Rust lets you create and use operating system
+/// threads. Many applications will probably use asynchronous programming ("green threads") instead
+/// of threads, but it is still useful to familiarize yourself with the lower-level primitives.
+///
+/// In this section, you will learn how to create threads and how to await their results.
 mod threads {
     use std::thread::JoinHandle;
 
@@ -57,6 +64,11 @@ mod threads {
     }
 }
 
+/// SHARED DATA
+///
+/// In all multi-threaded programming languages, threads can share data with other threads. In Rust,
+/// there are a variety of data types that can help you share immutable or mutable access to data
+/// between different threads, all designed to achieve both correctness and performance.
 mod sharing_data {
     use std::sync::{Arc, Mutex, RwLock};
 

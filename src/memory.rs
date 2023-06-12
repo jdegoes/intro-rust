@@ -40,7 +40,10 @@ mod stack {
             }
         }
 
-        assert_eq!(grow_stack(10), todo!("What is the size of the stack?"));
+        assert_eq!(
+            grow_stack(10),
+            todo!("What is the size of the stack?") as i32
+        );
     }
 
     #[test]
@@ -89,7 +92,7 @@ mod heap {
             }
         }
 
-        assert_eq!(grow_heap(10), todo!("What is the size of the heap?"));
+        assert_eq!(grow_heap(10), todo!("What is the size of the heap?") as i32);
     }
 
     #[test]
@@ -252,7 +255,7 @@ mod safe_pointers {
 
         let value = *pointer_x;
 
-        assert_eq!(value, todo!("What is the value of x?"));
+        assert_eq!(value, todo!("What is the value of x?") as i32);
     }
 
     #[test]
@@ -271,7 +274,7 @@ mod safe_pointers {
 
         assert_eq!(
             std::mem::size_of::<&Person>(),
-            todo!("What is the size of a pointer?")
+            todo!("What is the size of a pointer?") as usize
         );
     }
 
@@ -283,7 +286,7 @@ mod safe_pointers {
 
         let value = *pointer_x;
 
-        assert_eq!(value, todo!("What is the value of x?"));
+        assert_eq!(value, todo!("What is the value of x?") as i32);
     }
 
     #[test]
@@ -304,7 +307,7 @@ mod safe_pointers {
 
         assert_eq!(
             std::mem::size_of::<&mut Person>(),
-            todo!("What is the size of a mutable pointer?")
+            todo!("What is the size of a mutable pointer?") as usize
         );
     }
 
@@ -611,7 +614,7 @@ mod wrapper_types {
 
         assert_eq!(
             size_of::<Box<Person>>(),
-            todo!("What is the size of a Box?")
+            todo!("What is the size of a Box?") as usize
         );
     }
 

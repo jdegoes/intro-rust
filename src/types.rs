@@ -242,6 +242,65 @@ mod structs {
         // match (right before `n`), or by using `match &person` instead of `match person`.
         assert_eq!(todo!("person.name") as String, "John Doe");
     }
+
+    /// We can attach constructors for and methods on structs using the `impl` keyword, which must
+    /// be in the same module as the struct itself. The `impl` block can be used to define helper
+    /// functions that are related to the data type. These functions are called "methods" and are
+    /// invoked using the `.` operator, similar to methods in object-oriented languages (even
+    /// though Rust is not an object-oriented programming language). Methods provide a very useful
+    /// tool to organizing code, aiding comprehension and discovery.
+    ///
+    /// Methods accept `self` as the first argument, which is a reference to the struct itself,
+    /// which the method is being added to.
+    ///
+    /// The common patterns you will see for the `self` parameter are:
+    ///
+    /// - `&self` - a shared reference to the struct, useful for read-only methods
+    /// - `&mut self` - a mutable reference to the struct, useful for read-write methods
+    /// - `self` - takes ownership of the struct, useful for methods that consume the struct
+    ///
+    /// We will return to this topic in our next section on memory, but for now, just think in terms
+    /// of the above patterns when you are writing methods.
+    #[test]
+    fn struct_impl() {
+        #[derive(Debug, PartialEq, Eq)]
+        struct Person {
+            name: String,
+            age: u32,
+        }
+
+        impl Person {
+            // Define a constructor for Person that takes a name and uses a default age of 0.
+            fn newborn(name: String) -> Person {
+                todo!("Construct a Person")
+            }
+
+            // Define a method on Person that returns the name of the person.
+            // This method is a "getter" for the name field, so takes a shared reference to self.
+            fn name(&self) -> &str {
+                todo!("Return the name of the person")
+            }
+
+            // Define a method on Person that returns the age of the person.
+            // This method is a "getter" for the age field, so takes a shared reference to self.
+            fn age(&self) -> u32 {
+                todo!("Return the age of the person")
+            }
+
+            // Define a method on Person that increments the age of the person by 1.
+            // This method is a "setter" for the age field, so takes a mutable reference to self.
+            fn birthday(&mut self) {
+                todo!("Increment the age of the person by 1")
+            }
+        }
+
+        let mut person = Person::newborn("John Doe".to_owned());
+
+        person.birthday();
+
+        assert_eq!(person.name(), "John Doe");
+        assert_eq!(person.age(), 1);
+    }
 }
 
 /// ENUMS
@@ -509,8 +568,43 @@ mod enums {
 
         assert_eq!(is_high_powered_thief(thief), true);
     }
+
+    /// We can attach constructors for and methods on enums using the `impl` keyword, which must
+    /// be in the same module as the enum itself. The `impl` block can be used to define helper
+    /// functions that are related to the data type. As with structs, methods accept `self` as the
+    /// first argument, which is a reference to the enum itself, which the method is being added to.
+    #[test]
+    fn enum_impl() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
+
+        impl Direction {
+            // Define a method on Direction that returns a `bool` indicating whether the direction is
+            // `North`.
+            fn is_north(&self) -> bool {
+                todo!("Match on `self` and return true if it is `Direction::North`")
+            }
+        }
+
+        let north = Direction::North;
+
+        assert_eq!(north.is_north(), true);
+    }
 }
 
+/// GENERIC TYPES
+///
+/// Rust provides a powerful mechanism for abstracting over types, called generics. Generics allow
+/// you to define a type that has one or more type parameters, which are filled in with concrete
+/// types when the generic type is used. Generics are used extensively in the Rust standard library
+/// to provide generic data structures and algorithms.
+///
+/// In this section, you will learn how to make generic structs and enums.
 mod generics {
     #[test]
     fn struct_generic() {
@@ -541,6 +635,11 @@ mod generics {
     }
 }
 
+/// STANDARD TYPES
+///
+/// The Rust standard library defines a number of data types that are frequently used in Rust
+/// programs. These include `String`, `Vec`, and `HashMap`. In this section, you will learn how
+/// to use these types.
 mod standard {
     #[test]
     fn string_type() {
@@ -572,5 +671,19 @@ mod standard {
         let v: Vec<i32> = vec![1, 2, 3];
 
         assert_eq!(todo!("&v[0..2]") as &[i32], &[1, 2]);
+    }
+
+    #[test]
+    fn hash_map_type() {
+        // Create a `HashMap<&str, i32>` from a list of key-value pairs.
+        use std::collections::HashMap;
+
+        // Define the map with a vec of tuples, and then using `into_iter().collect`,
+        // convert the vec into a HashMap.
+        let mut map: HashMap<&str, i32> = todo!("vec![...]");
+
+        assert_eq!(map.get("foo"), Some(&42));
+        assert_eq!(map.get("bar"), Some(&43));
+        assert_eq!(map.get("baz"), Some(&44));
     }
 }
