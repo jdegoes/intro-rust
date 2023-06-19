@@ -24,13 +24,11 @@ mod variables {
 
     #[test]
     fn mutable_variable() {
-        todo!(
-            "Create a variable called `answer` that is mutable and set it equal to 0 with type i32"
-        );
+        let mut answer: i32 = 0;
+        println!("Answer: {}", answer);
+        answer = 42;
 
-        todo!("Assign 42 to `answer`");
-
-        assert_eq!(todo!("answer") as u32, 42);
+        assert_eq!(answer as u32, 42);
     }
 }
 
@@ -43,90 +41,90 @@ mod variables {
 mod literals {
     #[test]
     fn signed_integer_literal_32() {
-        let answer: i32 = todo!("The answer to the meaning of life, the universe, and everything");
+        let answer: i32 = 42;
 
         assert_eq!(answer, 42);
     }
 
     #[test]
     fn unsigned_integer_literal_32() {
-        let answer: u32 = todo!("The answer to the meaning of life, the universe, and everything");
+        let answer: u32 = 42;
 
         assert_eq!(answer, 42u32);
     }
 
     #[test]
     fn signed_integer_literal_64() {
-        let answer: i64 = todo!("A bigger number than can fit into an i32");
+        let answer: i64 = 2147483648;
 
         assert_eq!(answer, 2_147_483_648i64);
     }
 
     #[test]
     fn unsigned_integer_literal_64() {
-        let answer: u64 = todo!("A bigger number than can fit into an i32");
+        let answer: u64 = 2147483648;
 
         assert_eq!(answer, 2_147_483_648u64);
     }
 
     #[test]
     fn float_literal() {
-        let answer: f64 = todo!("A number with a fractional component");
+        let answer: f64 = 3.14159265358979323846264338327950288;
 
         assert_eq!(answer, 3.14159265358979323846264338327950288f64);
     }
 
     #[test]
     fn boolean_literal() {
-        let answer: bool = todo!("Is coffee better than tea?");
+        let answer: bool = true;
 
         assert_eq!(answer, true);
     }
 
     #[test]
     fn character_literal() {
-        let answer: char = todo!("A single character");
+        let answer: char = '🦀';
 
         assert_eq!(answer, '🦀');
     }
 
     #[test]
     fn string_literal() {
-        let answer: &str = todo!("A string slice");
+        let answer: &str = "Hello, world!";
 
         assert_eq!(answer, "Hello, world!");
     }
 
     #[test]
     fn byte_string_literal() {
-        let answer: &[u8] = todo!("A byte string slice");
+        let answer: &[u8] = b"Hello, world!";
 
         assert_eq!(answer, b"Hello, world!");
     }
 
     fn byte_literal() {
-        let answer: u8 = todo!("A single byte");
+        let answer: u8 = b'H';
 
         assert_eq!(answer, b'H');
     }
 
     #[test]
     fn array_literal() {
-        let answer: [i32; 3] = todo!("An array of integers");
+        let answer: [i32; 3] = [1, 2, 3];
 
         assert_eq!(answer, [1, 2, 3]);
     }
 
     #[test]
     fn tuple_literal() {
-        let answer: (i32, f64, &str) = todo!("A tuple of integers, floats, and strings");
+        let answer: (i32, f64, &str) = (1, 2.0, "three");
 
         assert_eq!(answer, (1, 2.0, "three"));
     }
 
     #[test]
     fn unit_literal() {
-        let answer: () = todo!("A unit value");
+        let answer: () = ();
 
         assert_eq!(answer, ());
     }
@@ -143,28 +141,29 @@ mod expressions {
 
     #[test]
     fn numeric_operator_expression() {
-        let answer: i32 = todo!("2 + 2");
+        let answer: i32 = { 2 + 2};
 
         assert_eq!(answer, 4);
     }
 
     #[test]
     fn boolean_operator_expression() {
-        let answer: bool = todo!("It's not true!");
+        let answer: bool = !true;
 
         assert_eq!(answer, false);
     }
 
     #[test]
     fn boolean_bit_operator_expression() {
-        let answer: bool = todo!("It's not true!");
+        let answer: bool = true & false;
 
         assert_eq!(answer, false);
     }
 
     #[test]
     fn if_else_expression() {
-        let answer: i32 = todo!("If true, 1, otherwise 0");
+        // ternary operator?
+        let answer: i32 = if true { 1 } else { 2 };
 
         assert_eq!(answer, 1);
     }
@@ -173,7 +172,10 @@ mod expressions {
     fn match_expression() {
         let result: Result<i32, String> = Result::Ok(42);
 
-        let answer: i32 = todo!("Match on result");
+        let answer: i32 = match result {
+            Ok(value) => value,
+            Err(_) => todo!("Handle error"),
+        };
 
         assert_eq!(answer, 42);
     }
@@ -190,7 +192,7 @@ mod expressions {
             age: 42,
         };
 
-        let answer: &str = todo!("Get the name of the person");
+        let answer: &str = person.name;
 
         assert_eq!(answer, "Alice");
     }
@@ -199,7 +201,7 @@ mod expressions {
     fn tuple_expression() {
         let tuple = (1, 2.0, "three");
 
-        let answer: &str = todo!("Project out 3rd element of tuple");
+        let answer: &str = tuple.2;
 
         assert_eq!(answer, "three");
     }
