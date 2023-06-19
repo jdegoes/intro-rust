@@ -25,22 +25,43 @@ mod structs {
     #[test]
     fn basic_struct_example() {
         // Add `name` and `age` fields to this struct, of type `String` and `u32` respectively.
-        struct Person {}
+        struct Person {
+            name: String,
+            age: u32,
+        }
+
+        let name = "John Doe".to_string();
+        let age = 42;
+
+        let person = Person { age, name };
 
         assert_eq!(std::mem::size_of::<Person>(), 32);
+        assert_eq!(person.name, "John Doe");
+        assert_eq!(person.age, 42);
     }
 
     #[test]
     fn basic_tuple_struct_example() {
         // Add `name` and `age` fields to this tuple struct, of type `String` and `u32` respectively.
-        struct Person();
+        struct Person(String, u32);
+
+        let person = Person("John Doe".to_string(), 42);
+
+        let name = "John Doe".to_string();
+        let age = 42;
+        let person2 = Person(name.clone(), age);
 
         assert_eq!(std::mem::size_of::<Person>(), 32);
+        assert_eq!(person.0, "John Doe");
+        assert_eq!(person.1, 42);
+        assert_eq!(person2.0, name);
+        assert_eq!(person2.1, age);
     }
 
     #[test]
     fn struct_debug() {
         // Derive the `Debug` trait for this struct, so that it can be printed.
+        #[derive(Debug)]
         struct Person {
             name: &'static str,
             age: u32,
@@ -52,7 +73,7 @@ mod structs {
         };
 
         assert_eq!(
-            format!("{:?}", todo!("person")),
+            format!("{:?}", person),
             "Person { name: \"John Doe\", age: 42 }"
         );
     }
@@ -61,6 +82,7 @@ mod structs {
     fn struct_eq() {
         // Derive the `PartialEq` and `Eq` traits for this struct, so that it can be compared for
         // equality.
+        #[derive(Debug, PartialEq, Eq)]
         struct Person {
             name: &'static str,
             age: u32,
@@ -75,13 +97,13 @@ mod structs {
             age: 42,
         };
 
-        assert_eq!(todo!("person1"), todo!("person2"));
+        assert_eq!(person1, person2);
     }
 
     #[test]
     fn struct_clone() {
         // Derive the `Clone` trait for this struct, so that it can be cloned.
-        #[derive(Debug, PartialEq, Eq)]
+        #[derive(Debug, PartialEq, Eq, Clone)]
         struct Person {
             name: &'static str,
             age: u32,
@@ -91,7 +113,7 @@ mod structs {
             name: "John Doe",
             age: 42,
         };
-        let person2 = todo!("person1.clone()");
+        let person2 = person1.clone();
 
         assert_eq!(person1, person2);
     }
