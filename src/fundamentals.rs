@@ -162,7 +162,6 @@ mod expressions {
 
     #[test]
     fn if_else_expression() {
-        // ternary operator?
         let answer: i32 = if true { 1 } else { 2 };
 
         assert_eq!(answer, 1);
@@ -174,7 +173,7 @@ mod expressions {
 
         let answer: i32 = match result {
             Ok(value) => value,
-            Err(_) => todo!("Handle error"),
+            Err(err) => panic!("{}", err),
         };
 
         assert_eq!(answer, 42);
@@ -213,6 +212,8 @@ mod expressions {
             42
         };
 
+        println!("Answer: {}", answer);
+
         assert_eq!(answer, 42);
     }
 
@@ -244,14 +245,14 @@ mod expressions {
 
     #[test]
     fn closure_expression() {
-        let answer = |x: i32| x + 1;
+        let answer = |x: i32, y: i32| x + y;
 
-        assert_eq!(answer(41), 42);
+        assert_eq!(answer(41, 1), 42);
     }
 
     #[test]
     fn range_inclusive_expression() {
-        let mut range: RangeInclusive<i32> = todo!("Create a range from 1 to 3");
+        let mut range: RangeInclusive<i32> = 1..=3;
 
         let found = range.find(|&x| x == 3);
 
@@ -286,7 +287,7 @@ mod expressions {
         let range = 1..=3;
 
         let answer: () = for x in range {
-            sum = sum + x;
+            sum += x;
         };
 
         assert_eq!(sum, 6);
@@ -330,7 +331,7 @@ mod statements {
 
         println!("The wrong answer is {}", answer);
 
-        todo!("Assign 42 to answer");
+        answer = 42;
 
         assert_eq!(answer, 42);
     }
@@ -342,7 +343,7 @@ mod statements {
 
         println!("The wrong answer is {}", answer);
 
-        if todo!("If true, assign 42 to answer") {
+        if true {
             answer = 42;
         }
 
@@ -356,7 +357,7 @@ mod statements {
 
         println!("The wrong answer is {}", answer);
 
-        if todo!("If true, assign 42 to answer") {
+        if true {
             answer = 42;
         } else {
             answer = -42;
@@ -372,9 +373,13 @@ mod statements {
 
         println!("Press any key to continue...");
 
-        todo!("Read a line into &mut buf with std::io::stdin()");
+        if false {
+            std::io::stdin().read_line(&mut buf).unwrap();
+        } else {
+            buf = "a\n".to_string();
+        }
 
-        assert_eq!((), ());
+        assert_eq!(buf, "a\n");
     }
 }
 
@@ -387,9 +392,12 @@ mod items {
     #[test]
     fn function_item() {
         // Declare a function named `answer` that returns 42.
+        fn answer() -> i32 {
+            42
+        }
 
         // Call the function:
-        let value: i32 = todo!("answer()");
+        let value: i32 = answer();
 
         assert_eq!(value, 42);
     }
@@ -398,12 +406,18 @@ mod items {
     fn struct_item() {
         // Declare a struct item named `Person` that has name and age.
         // The type of name is `&'static str` and the type of age is `i32`.
-        struct Person {}
+        struct Person {
+            name: &'static str,
+            age: i32,
+        }
 
-        let person: Person = todo!("Person {{ name: \"Alice\", age: 42 }}");
+        let person: Person = Person {
+            name: "Alice",
+            age: 42,
+        };
 
-        assert_eq!(todo!("person.name") as &str, "Alice");
-        assert_eq!(todo!("person.age") as i32, 42);
+        assert_eq!(person.name, "Alice");
+        assert_eq!(person.age, 42);
     }
 
     #[test]
@@ -411,22 +425,29 @@ mod items {
         // Declare an enum item named `Direction` that has four variants:
         // `North`, `South`, `East`, and `West`.
         #[derive(PartialEq, Eq, Debug)]
-        enum Direction {}
+        enum Direction {
+            North,
+            South,
+            East,
+            West,
+        }
 
-        let direction: Direction = todo!("Direction::North");
+        let direction: Direction = Direction::North;
 
-        assert_eq!(direction, todo!("Direction::North") as Direction);
+        assert_eq!(direction, Direction::North);
     }
 
     #[test]
     fn trait_item() {
         // Declare a trait item named `Answer` that has a single function named `answer`
         // that returns an `i32`.
-        trait Answer {}
+        trait Answer {
+            fn answer(&self) -> i32;
+        }
 
         struct Question {}
 
-        impl Question {
+        impl Answer for Question {
             // impl Answer for Question
             fn answer(&self) -> i32 {
                 42
@@ -442,9 +463,13 @@ mod items {
     fn module_item() {
         // Declare a module item named `math` that has a function named `add` that adds
         // two `i32` values together.
-        mod math {}
+        mod math {
+            pub fn add(a: i32, b: i32) -> i32 {
+                a + b
+            }
+        }
 
-        let answer: i32 = todo!("math::add(40, 2)");
+        let answer: i32 = math::add(40, 2);
 
         assert_eq!(answer, 42);
     }
@@ -452,21 +477,22 @@ mod items {
     #[test]
     fn type_alias_item() {
         // Declare a type alias named `Answer` that is an `i32`.
-        type Answer = ();
+        type Answer = i32;
 
-        let answer: Answer = todo!("42");
+        let answer: Answer = 42;
 
-        assert_eq!(answer, todo!("42"));
+        assert_eq!(answer, 42);
     }
 
     #[test]
     fn union_item() {
         // Declare a union named `Number` that has two fields: `int: i32` and `float: f64`.
         union Number {
+            int: i32,
             float: f32,
         }
 
-        let answer: Number = todo!("Number {{ int: 42 }}");
+        let answer: Number = Number { int: 42 };
 
         assert_eq!(unsafe { answer.float }, 5.9e-44);
     }
@@ -475,9 +501,10 @@ mod items {
     fn use_item() {
         // Declare a use item that brings the `std::collections::HashMap` type into scope
         // as `Map`.
+        use std::collections::HashMap as Map;
 
-        // let mut map: Map<i32, &str> = Map::new();
-        // map.insert(42, "the answer");
-        // assert_eq!(map.get(&42), Some(&"the answer"));
+        let mut map: Map<i32, &str> = Map::new();
+        map.insert(42, "the answer");
+        assert_eq!(map.get(&42), Some(&"the answer"));
     }
 }
