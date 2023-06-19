@@ -141,7 +141,7 @@ mod expressions {
 
     #[test]
     fn numeric_operator_expression() {
-        let answer: i32 = { 2 + 2};
+        let answer: i32 = { 2 + 2 };
 
         assert_eq!(answer, 4);
     }
@@ -210,7 +210,7 @@ mod expressions {
     fn block_expression() {
         let answer: i32 = {
             println!(".");
-            todo!("Magic number")
+            42
         };
 
         assert_eq!(answer, 42);
@@ -222,14 +222,14 @@ mod expressions {
             x + 1
         }
 
-        let answer: i32 = todo!("Add one to 41");
+        let answer: i32 = add_one(41);
 
         assert_eq!(answer, 42);
     }
 
     #[test]
     fn method_call_expression() {
-        let answer: String = todo!("Convert 42 to a string");
+        let answer: String = 42.to_string();
 
         assert_eq!(answer, "42");
     }
@@ -237,14 +237,14 @@ mod expressions {
     #[test]
     fn array_indexing_expression() {
         let array: [i32; 3] = [1, 2, 3];
-        let answer: i32 = todo!("Get the first element of the array");
+        let answer: i32 = array[0];
 
         assert_eq!(answer, 1);
     }
 
     #[test]
     fn closure_expression() {
-        let answer = |x: i32| x + (todo!("Add one to x") as i32);
+        let answer = |x: i32| x + 1;
 
         assert_eq!(answer(41), 42);
     }
@@ -260,7 +260,7 @@ mod expressions {
 
     #[test]
     fn range_exclusive_expression() {
-        let mut range: Range<i32> = todo!("Create a range from 1 to 3 (exclusive)");
+        let mut range: Range<i32> = 1..3;
 
         let found = range.find(|&x| x == 3);
 
@@ -272,7 +272,7 @@ mod expressions {
         let answer: i32 = loop {
             println!("Looping...");
 
-            break todo!("Break with 42");
+            break 42;
         };
 
         assert_eq!(answer, 42);
@@ -286,7 +286,7 @@ mod expressions {
         let range = 1..=3;
 
         let answer: () = for x in range {
-            todo!("Add x to sum");
+            sum = sum + x;
         };
 
         assert_eq!(sum, 6);
@@ -301,24 +301,22 @@ mod expressions {
 mod statements {
     #[test]
     fn item_statement() {
-        fn answer() -> i32 {
-            todo!("Declare a function named answer that returns 42")
-        }
+        fn answer() -> i32 { 42 }
 
         assert_eq!(answer(), 42);
     }
 
     #[test]
     fn print_statement() {
-        todo!("Print Hello World! to the console");
+        println!("Hello, world!");
 
         assert_eq!((), ());
     }
 
     #[test]
     fn let_statements() {
-        let two: i32 = todo!("As the label says");
-        let four: i32 = todo!("As the label says");
+        let two: i32 = 2;
+        let four: i32 = 4;
 
         assert_eq!(two + two, four);
     }
