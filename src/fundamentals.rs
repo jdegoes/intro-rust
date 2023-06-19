@@ -18,9 +18,8 @@
 mod variables {
     #[test]
     fn immutable_variable() {
-        todo!("Create a variable called `answer` that is immutable and set it equal to 42 with type i32");
-
-        assert_eq!(todo!("answer") as u32, 42);
+        let answer: i32 = 42;
+        assert_eq!(answer as u32, 42);
     }
 
     #[test]
