@@ -301,7 +301,9 @@ mod expressions {
 mod statements {
     #[test]
     fn item_statement() {
-        fn answer() -> i32 { 42 }
+        fn answer() -> i32 {
+            42
+        }
 
         assert_eq!(answer(), 42);
     }
