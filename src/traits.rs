@@ -31,10 +31,20 @@ mod basics {
             name: &'static str,
         }
 
+        impl Animal for Human {
+            fn name(&self) -> &'static str {
+                self.name
+            }
+
+            fn talk(&self) {
+                println!("{} says hello", self.name());
+            }
+        }
+
         // Implement the Animal trait for Human so the test can be made to pass:
         let sherlock = Human { name: "Sherlock" };
 
-        assert_eq!(todo!("sherlock.name()") as &str, "Sherlock");
+        assert_eq!(sherlock.name() as &str, "Sherlock");
     }
 
     #[test]
@@ -48,10 +58,15 @@ mod basics {
         }
 
         // Implement the Hopper trait for Rabbit:
+        impl Hopper for Rabbit {
+            fn hop(&self) {
+                println!("{} is hopping", self.name);
+            }
+        }
 
         // Add a trait bound to the hop function so the test can be made to pass:
-        fn hop<T>(hopper: T) {
-            todo!("hopper.hop()");
+        fn hop<T: Hopper>(hopper: T) {
+            hopper.hop();
         }
 
         let rabbit = Rabbit { name: "Rabbit" };
@@ -76,8 +91,8 @@ mod basics {
         }
 
         // Use a where clause to add a trait bound to the hop function:
-        fn hop<T>(hopper: T) {
-            todo!("hopper.hop()");
+        fn hop<T>(hopper: T) where T: Hopper {
+            hopper.hop();
         }
 
         let rabbit = Rabbit { name: "Rabbit" };
@@ -110,8 +125,9 @@ mod basics {
         }
 
         // Use a composite trait bound so you can make the animal hop and swim:
-        fn hop_and_swim<T>(animal: T) {
-            todo!("animal.hop(); animal.swim()");
+        fn hop_and_swim<T>(animal: T) where T: Hopper + Swimmer {
+            animal.hop();
+            animal.swim();
         }
 
         let duck = Duck { name: "Duck" };
@@ -229,9 +245,17 @@ mod associated_types {
             amount: i32,
         }
 
+        impl Function<i32> for Add {
+            type Out = i32;
+
+            fn call(&self, input: i32) -> Self::Out {
+                input + self.amount
+            }
+        }
+
         // Implement the Function trait for Add so the test can be made to pass:
         // Note the return type of the call to `call`, which is tracked by the associated type `Out`.
-        assert_eq!(todo!("Add {{ amount: 1 }}.call(2)") as i32, 3);
+        assert_eq!(Add { amount: 1 }.call(2) as i32, 3);
     }
 }
 
@@ -287,10 +311,10 @@ mod dynamic {
             }
         }
 
-        let sherlock = Human { name: "Sherlock" };
+        let sherlock  = Human { name: "Sherlock" };
 
         // Create a dynamic trait object from the Human struct:
-        let sherlock_animal: Box<dyn Animal> = todo!("Use a box!");
+        let sherlock_animal: Box<dyn Animal> = Box::new(sherlock);
 
         assert_eq!(sherlock_animal.name(), "Sherlock");
     }
@@ -314,10 +338,15 @@ mod existential {
         }
 
         // Refactor this to use impl DuckLike instead of the trait bound:
-        fn make_duck_quack<T>(duck: T) -> String
-        where
-            T: DuckLike,
-        {
+        fn make_duck_quack(duck: impl DuckLike) -> String {
+            duck.quack()
+        }
+
+        fn make_duck_quack2<T: DuckLike>(duck: T) -> String {
+            duck.quack()
+        }
+
+        fn make_duck_quack3<T>(duck: T) -> String where T: DuckLike {
             duck.quack()
         }
 
@@ -336,6 +365,9 @@ mod existential {
         struct Duck {
             name: &'static str,
         }
+        struct Platypus {
+            name: &'static str,
+        }
 
         impl DuckLike for Duck {
             fn quack(&self) -> String {
@@ -343,13 +375,23 @@ mod existential {
             }
         }
 
+        impl DuckLike for Platypus {
+            fn quack(&self) -> String {
+                format!("{} is quacking", self.name)
+            }
+        }
+
+        fn create_some_duck_dyn(name: &'static str) -> Box<dyn DuckLike> {
+            Box::new(Duck { name })
+        }
+
         // Refactor this to return an existential DuckLike using `impl`:
-        fn create_some_duck(name: &'static str) -> Duck {
+        fn create_some_duck(name: &'static str) -> impl DuckLike {
             Duck { name }
         }
 
         assert_eq!(
-            todo!("create_some_duck(\"Donald\").quack()") as String,
+            create_some_duck("Donald").quack() as String,
             "Donald is quacking"
         );
     }

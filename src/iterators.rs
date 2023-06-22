@@ -24,7 +24,7 @@ mod basics {
         let mut sum = 0;
 
         for i in v {
-            todo!("Add i to sum")
+            sum += i;
         }
 
         assert_eq!(sum, 6);
@@ -37,7 +37,7 @@ mod basics {
         let mut sum = 0;
 
         for i in v {
-            todo!("Add i to sum")
+            sum += i;
         }
 
         assert_eq!(sum, 6);
@@ -113,9 +113,10 @@ mod operators {
 
         let into_iter = v.into_iter();
 
-        let mapped = todo!("use into_iter.map to map each element to itself plus one");
+        let mapped = 
+            into_iter.map(|x| x + 1);
 
-        let collected: Vec<i32> = todo!("mapped.collect::<Vec<_>>()");
+        let collected: Vec<i32> = mapped.collect();
 
         assert_eq!(collected, vec![2, 3, 4]);
     }
@@ -126,9 +127,10 @@ mod operators {
 
         let into_iter = v.into_iter();
 
-        let filtered = todo!("use into_iter.filter to filter out odd numbers");
+        let filtered = 
+            into_iter.filter(|x| x % 2 == 0);
 
-        let collected: Vec<i32> = todo!("filtered.collect::<Vec<_>>()");
+        let collected: Vec<i32> = filtered.collect();
 
         assert_eq!(collected, vec![2]);
     }

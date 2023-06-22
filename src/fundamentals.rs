@@ -17,7 +17,7 @@
 /// by the compiler.
 mod variables {
     #[test]
-    fn immutable_variable() {
+    fn immutable_variable() -> () {
         let answer: i32 = 42;
 
         assert_eq!(answer, 42);

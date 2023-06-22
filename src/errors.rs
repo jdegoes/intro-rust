@@ -301,8 +301,12 @@ mod result {
         }
 
         fn decode_and_then_divide(numerator: &str, denominator: &str) -> Result<f64, &'static str> {
-            // Use the ? operator to either unwrap the Result or return Err:
-            todo!("don't allow division by zero");
+            // Use the ? operator to either unwrap the Result or return Err:            
+            let n = decode(numerator)?;
+            
+            let d = decode(denominator)?;
+            
+            divide(n as f64, d as f64)
         }
 
         assert_eq!(decode_and_then_divide("4", "2"), Ok(2.0));

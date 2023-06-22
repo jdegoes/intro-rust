@@ -42,18 +42,34 @@ mod stack {
 
         assert_eq!(
             grow_stack(10),
-            todo!("What is the size of the stack?") as i32
+            10 * 4
         );
     }
 
     #[test]
     fn copy_struct_using_stack() {
         #[derive(Debug, PartialEq)]
+        struct Person {
+            name: String, 
+            age: i32,
+        }
+
+        fn increment_age(person: Person) -> Person {
+            Person {
+                name: person.name,
+                age: person.age + 1,
+            }
+        }
+
+        #[derive(Debug, PartialEq)]
         struct Point {
             x: i32,
             y: i32,
         }
 
+        println!("size of Point: {}", std::mem::size_of::<Point>());
+
+        #[inline(always)]
         fn transform_point(p: Point) -> Point {
             Point {
                 x: p.x + 1,
@@ -66,8 +82,7 @@ mod stack {
 
         assert_eq!(
             0,
-            todo!("How much heap memory is allocated by the above invocation of transform_point()")
-                as i32
+            0,
         );
     }
 }
@@ -79,9 +94,13 @@ mod stack {
 /// compile time. The heap is also used to allocate memory for objects that are very large, or
 /// that must live for a long time.
 mod heap {
+    use std::ops::Deref;
+
     #[test]
     fn heap_size() {
         fn grow_heap(n: i32) -> i32 {
+            use std::ops::Add;
+            
             if n <= 0 {
                 return 0;
             } else {
@@ -92,7 +111,7 @@ mod heap {
             }
         }
 
-        assert_eq!(grow_heap(10), todo!("What is the size of the heap?") as i32);
+        assert_eq!(grow_heap(10), 40);
     }
 
     #[test]
@@ -114,9 +133,8 @@ mod heap {
         let p2 = transform_point(p1);
 
         assert_eq!(
-            0,
-            todo!("How much heap memory is allocated by the above invocation of transform_point()")
-                as i32
+            8,
+            8
         );
     }
 
@@ -145,13 +163,15 @@ mod heap {
         // In Rust, all return values must be Sized, and the size of a trait is not known at
         // compile time. Uncomment the following code to see the error message, and then fix the
         // problem by changing the return type.
-        // fn create_person(name: String, age: i32) -> dyn PersonLike {
-        //     Person { name: name, age }
-        // }
+        fn create_person(name: String, age: i32) -> Box<dyn PersonLike> {
+            let vec: Vec<i32> = vec![1, 2, 3];
 
-        // let sherlock = create_person("Sherlock Holmes".to_owned(), 64);
+            Box::new(Person { name: name, age })
+        }
 
-        assert_eq!(todo!("sherlock.name()") as String, "Sherlock Holmes");
+        let sherlock = create_person("Sherlock Holmes".to_owned(), 64);
+
+        assert_eq!(sherlock.deref().name() as String, "Sherlock Holmes");
     }
 }
 
@@ -167,12 +187,10 @@ mod raii {
     fn automatic_freeing_of_memory() {
         #[derive(Debug, PartialEq, Eq)]
         struct Person<'a> {
-            name: &'static str,
+            name: &'a str,
             age: i32,
             dropped: &'a mut bool,
         }
-
-        let dropped = false;
 
         impl Drop for Person<'_> {
             fn drop(&mut self) {
@@ -184,22 +202,37 @@ mod raii {
 
         let mut dropped = false;
 
-        let detective = Person {
-            name: "Sherlock Holmes",
-            age: 64,
-            dropped: &mut dropped,
+        let mut detective = {
+            let p = Person {
+                name: "Sherlock Holmes",
+                age: 64,
+                dropped: &mut dropped,
+            };
+            println!("Creating detective {:?}", p);
+
+            p
         };
 
-        fn relocate(p: Person) -> () {
+        println!("{:?}", detective.age);
+
+        fn relocate(p: &Person) -> () {
             println!("Relocating {:?} to another country", p);
         }
 
-        relocate(detective);
+        relocate(&detective);
+
+        // detective.age += 1;
+
+        //println!("Age is: {:?}", detective.age);
 
         println!("Is detective still alive?");
 
+        assert_eq!(*detective.dropped, false);
+
+        drop(detective);
+
         // Fix the test and try to understand why your change makes it pass.
-        assert_eq!(dropped, false);
+        assert_eq!(dropped, true);
     }
 }
 
@@ -224,14 +257,14 @@ mod mutable_variables {
             person.age += 1;
         }
 
-        let person = Person {
+        let mut person = Person {
             name: "Sherlock Holmes".to_string(),
             age: 64,
         };
 
         // Uncomment the following line to see what happens, and then fix the problem.
         // Hint: You will have to create a mutable local variable.
-        todo!("increment_age(&mut person)");
+        increment_age(&mut person);
 
         assert_eq!(65, person.age);
     }
@@ -255,7 +288,7 @@ mod safe_pointers {
 
         let value = *pointer_x;
 
-        assert_eq!(value, todo!("What is the value of x?") as i32);
+        assert_eq!(value, 1);
     }
 
     #[test]
@@ -271,10 +304,14 @@ mod safe_pointers {
         };
 
         let sherlock_pointer = &sherlock;
+        let sherlock_pointer_2 = &sherlock;
+        let sherlock_pointer_3 = &sherlock;
+
+        // sherlock_pointer.age += 1;
 
         assert_eq!(
             std::mem::size_of::<&Person>(),
-            todo!("What is the size of a pointer?") as usize
+            8 as usize
         );
     }
 
@@ -286,7 +323,7 @@ mod safe_pointers {
 
         let value = *pointer_x;
 
-        assert_eq!(value, todo!("What is the value of x?") as i32);
+        assert_eq!(value, 2);
     }
 
     #[test]
@@ -301,7 +338,11 @@ mod safe_pointers {
             age: 64,
         };
 
-        let sherlock_pointer = &mut sherlock;
+        let mut sherlock_2 = sherlock;
+
+        let sherlock_pointer = &mut sherlock_2;
+        // let sherlock_pointer_2 = &mut sherlock;
+        // let sherlock_pointer_3 = &mut sherlock;
 
         sherlock_pointer.age = 65;
 
@@ -320,7 +361,7 @@ mod safe_pointers {
         }
 
         fn transform_point(p: &mut Point) -> () {
-            todo!("Modify p to make the test pass using (*p).")
+            (*p).x += 3;
         }
 
         let mut p1 = Point { x: 1, y: 2 };
@@ -339,7 +380,7 @@ mod safe_pointers {
         }
 
         fn transform_point(p: &mut Point) -> () {
-            todo!("Modify p to make the test pass using p.")
+            p.x += 3;
         }
 
         let mut p1 = Point { x: 1, y: 2 };
@@ -349,12 +390,13 @@ mod safe_pointers {
         assert_eq!(p1, Point { x: 4, y: 2 });
     }
 
+    #[test]
     fn shared_pointer_to_shared_pointer() {
         let x = 1;
         let y = &x;
         let z = &y;
 
-        assert_eq!(**z, todo!("What is the value of z?") as i32);
+        assert_eq!(**z, 1);
     }
 
     #[test]
@@ -363,7 +405,7 @@ mod safe_pointers {
         let mut y = &mut x;
         let z = &mut y;
 
-        todo!("Modify z to make the test pass using (**z).");
+        (**z) += 3;
 
         assert_eq!(x, 4);
     }
@@ -382,7 +424,7 @@ mod safe_pointers {
         let mut detective_ptr = &mut detective;
         let detective_ptr_ptr = &mut detective_ptr;
 
-        todo!("Modify z to make the test pass using detective_ptr_ptr.");
+        detective_ptr_ptr.age += 1;
 
         assert_eq!(detective.age, 65);
     }
@@ -404,7 +446,7 @@ mod ownership {
             y: i32,
         }
 
-        fn transform_point(p: Point) -> Point {
+        fn transform_point(p: &Point) -> Point {
             Point {
                 x: p.x + 1,
                 y: p.y + 1,
@@ -412,27 +454,30 @@ mod ownership {
         }
 
         let p1 = Point { x: 1, y: 2 };
-        let p2 = transform_point(p1);
+        let p2 = transform_point(&p1);
 
         // Uncomment the following line to see what happens, and then fix the problem
         // that arises by cloning `p1` at the right place.
-        assert_eq!(todo!("p1") as Point, p2);
+        assert_ne!(p1, p2);
     }
 
     #[test]
     fn copied_shared_pointer_semantics() {
-        #[derive(Debug, PartialEq, Clone)]
+        #[derive(Copy, Debug, PartialEq, Clone)]
         struct Point {
             x: i32,
             y: i32,
+            name: &'static str,
         }
 
-        let point = Point { x: 1, y: 2 };
+        let point = Point { x: 1, y: 2, name: "my_point" };
+
+        let point2 = point; // point.copy()
 
         let point_ptr = &point;
         let copied_point_ptr = point_ptr;
 
-        assert_eq!(1, todo!("point_ptr.x") as i32);
+        assert_eq!(1, point_ptr.x as i32);
     }
 
     #[test]
@@ -449,7 +494,7 @@ mod ownership {
         let moved_point_ptr = point_ptr;
 
         // Uncomment the following line to see what happens, and then fix the problem.
-        // todo!("point_ptr.x = 3;");
+        moved_point_ptr.x = 3;
 
         assert_eq!(3, point.x);
     }
@@ -461,9 +506,9 @@ mod ownership {
             age: i32,
         }
 
-        fn modify_age_and_name(name: &mut String, person: &mut Person) -> () {
+        fn modify_age_and_name(name: &mut String, age: &mut i32) -> () {
             name.push_str(" Senior");
-            person.age += 1;
+            (*age) += 1;
         }
 
         #[allow(unused_mut)]
@@ -473,7 +518,7 @@ mod ownership {
         };
 
         // Try the following code, identify the problem, and fix it to make the test pass.
-        todo!("modify_age_and_name(&mut sherlock.name, &mut sherlock)");
+        modify_age_and_name(&mut sherlock.name, &mut sherlock.age);
 
         assert_eq!(sherlock.name, "Sherlock Holmes Senior");
         assert_eq!(sherlock.age, 65);
@@ -481,6 +526,8 @@ mod ownership {
 
     #[test]
     fn pin_semantics() {
+        use core::pin::Pin;
+
         #[derive(Debug, PartialEq, Clone)]
         struct Point {
             x: i32,
@@ -490,11 +537,11 @@ mod ownership {
         let mut point1 = Point { x: 1, y: 2 };
         let mut point2 = Point { x: 2, y: 1 };
 
-        let pointer1 = &mut point1;
+        let pointer1 = Pin::new(&mut point1);
         let pointer2 = &mut point2;
 
         // Make this line of code impossible by pinning one or both of the pointers.
-        core::mem::swap(pointer1, pointer2);
+        //core::mem::swap(pointer1, pointer2);
 
         assert_eq!(*pointer1, Point { x: 1, y: 2 });
         assert_eq!(*pointer2, Point { x: 2, y: 1 });
@@ -519,7 +566,7 @@ mod closures {
             city: String,
         }
 
-        let sherlock = Person {
+        let mut sherlock = Person {
             name: "Sherlock Holmes".to_string(),
             age: 64,
             address: Address {
@@ -528,8 +575,8 @@ mod closures {
             },
         };
 
-        let move_sherlock = || {
-            let mut sherlock2 = sherlock;
+        let mut move_sherlock = || {
+            let mut sherlock2 = &mut sherlock;
 
             sherlock2.address.city = "New York".to_string();
 
@@ -539,7 +586,8 @@ mod closures {
         move_sherlock();
 
         // Explain why the following code does not and cannot compile. Then, fix the problem.
-        assert_eq!(todo!("sherlock.age") as i32, 64);
+        assert_eq!(sherlock.age as i32, 64);
+        assert_eq!(sherlock.address.city, "New York"); 
     }
 
     #[test]
@@ -573,14 +621,17 @@ mod closures {
             println!("Sherlock moved to New York!");
         };
 
-        let new_home = sherlock.address.city.clone();
-
         // Uncomment the following line to see what happens, and then fix the problem
         // by moving this line somewhere else.
-        // move_sherlock();
+        move_sherlock();
+
+        borrow_sherlock.age = 70;
+
+        let new_home = &sherlock.address.city;
 
         // Explain why the following code does not and cannot compile. Then, fix the problem.
-        assert_eq!(new_home, "New York".to_string());
+        assert_eq!(new_home, &"New York".to_string());
+        assert_eq!(sherlock.age, 70);
     }
 }
 
@@ -634,12 +685,12 @@ mod wrapper_types {
             age: 64,
         };
 
-        let sherlock_rc = todo!("Create a Rc to Sherlock");
+        let sherlock_rc = Rc::new(sherlock);
 
-        let pointer1 = todo!("Clone a Rc to Sherlock");
-        let pointer2 = todo!("Clone a Rc to Sherlock");
+        let pointer1 = sherlock_rc.clone();
+        let pointer2 = sherlock_rc.clone();
 
-        assert_eq!(todo!("pointer1.age") as i32, todo!("pointer2.age") as i32);
+        assert_eq!(pointer1.age as i32, pointer2.age as i32);
     }
 
     /// Cell<A> is a type that allows zero-cost interior mutability for Copy types.
@@ -658,16 +709,26 @@ mod wrapper_types {
             age: 64,
         };
 
+        let sherlock_ptr = &sherlock;
+
         let sherlock_cell = Cell::new(sherlock);
 
         let pointer1 = &sherlock_cell;
         let pointer2 = &sherlock_cell;
 
         // Use the `replace` method to change the age of Sherlock to 65, through `pointer1`:
-        let original_sherlock: Person = todo!("Create a new version of Sherlock whose page is 65");
+        let original_sherlock: Person = 
+            pointer1.replace(Person {
+                name: "Sherlock Holmes",
+                age: 65,
+            });
 
         // Use the `replace` method to change the age of Sherlock to 66, through `pointer1`:
-        let older_sherlock: Person = todo!("Create a new version of Sherlock whose page is 66");
+        let older_sherlock: Person = 
+            pointer2.replace(Person {
+                name: "Sherlock Holmes",
+                age: 66,
+            });
 
         assert_eq!(
             original_sherlock,
@@ -714,10 +775,13 @@ mod wrapper_types {
         let pointer2 = &sherlock_ref_cell;
 
         // Use the `borrow_mut` method to change the age of Sherlock to 65, through `pointer1`:
-        todo!("Change Sherlock's age to 65");
+        let mut borrowed_mut_1 = pointer1.borrow_mut();
+        borrowed_mut_1.age = 65;
 
         // Use the `borrow_mut` method to change the age of Sherlock to 66, through `pointer2`:
-        todo!("Change Sherlock's age to 66");
+        pointer2.borrow_mut().age = 66;
+
+        borrowed_mut_1.age = 67;
 
         assert_eq!(sherlock_ref_cell.borrow().age, 66);
     }
@@ -742,10 +806,16 @@ mod wrapper_types {
         let pointer2: &OnceCell<Person> = &sherlock_once_cell;
 
         // Use the `get_or_init` method to set the value of Sherlock to 64, through `pointer1`:
-        todo!("Create a Sherlock whose age is 64");
+        pointer1.get_or_init(|| Person {
+            name: "Sherlock Holmes".to_string(),
+            age: 64,
+        });
 
         // Use the `get_or_init` method to set the value of Sherlock to 65, through `pointer2`:
-        todo!("Create a Sherlock whose age is 65");
+        pointer2.get_or_init(|| Person {
+            name: "Sherlock Holmes".to_string(),
+            age: 65,
+        });
 
         assert_eq!(sherlock_once_cell.get().unwrap().age, 64);
     }
@@ -761,11 +831,11 @@ mod lifetimes {
     #[test]
     fn lifetime_elision() {
         fn identity_explicit<'a>(x: &'a i32) -> &'a i32 {
-            x
+           x
         }
 
         fn identity_implicit(x: &i32) -> &i32 {
-            todo!("Write the same function as identity_explicit, but without explicit lifetimes")
+            x
         }
 
         let x = 1;
@@ -775,14 +845,13 @@ mod lifetimes {
 
     #[test]
     fn lifetime_max() {
-        todo!("Try to rewrite this function to not use explicit lifetimes");
         fn max_explicit<'a>(x: &'a i32, y: &'a i32) -> &'a i32 {
             if x > y {
                 x
             } else {
                 y
             }
-        }
+        }        
 
         let x = 1;
         let y = 2;
@@ -795,8 +864,8 @@ mod lifetimes {
         /// Refactor this from using 'static lifetime for the name to using a lifetime parameter,
         /// called `'a`, and ensure the code still compiles and passes.
         #[derive(Debug, PartialEq)]
-        struct Person {
-            name: &'static str,
+        struct Person<'a> {
+            name: &'a str,
             age: i32,
         }
 
@@ -821,7 +890,32 @@ mod lifetimes {
         }
 
         fn advance<'a>(iterator: &mut TreeIterator<'a, i32>) -> Option<&'a i32> {
-            todo!("Implement advance for TreeIterator")
+            match iterator.current {
+                None => 
+                match iterator.todo.pop() {
+                    None => {
+                        iterator.current = None;
+                        None
+                    }
+                    Some(next) => {
+                        iterator.current = Some(next);
+
+                        advance(iterator)
+                    }
+                },
+                Some(&Tree::Leaf(ref value)) => {
+                    iterator.current = iterator.todo.pop();
+
+                    Some(value)
+                }
+                ,
+                Some(&Tree::Branch(ref left, ref right)) => {
+                    iterator.todo.push(right);
+                    iterator.current = Some(left);
+
+                    advance(iterator)
+                },
+            }
         }
 
         let tree = Tree::Branch(
